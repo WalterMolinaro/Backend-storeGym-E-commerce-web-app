@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 1) mostro tutti i prodotti che appartengono ad una data categoria
@@ -49,7 +50,7 @@ public class ProdottoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Prodotto> mostraTuttiProdotti(int pageNumber, int pageSize, String sortBy){
+    public List<Prodotto> mostraTuttiProdottiPaginati(int pageNumber, int pageSize, String sortBy){
         Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
         Page<Prodotto> pagedResult = prodottoRepository.findAll(paging);
         if ( pagedResult.hasContent() ) {
@@ -58,6 +59,15 @@ public class ProdottoService {
         else {
             return new ArrayList<>();
         }
+    }
+    @Transactional(readOnly = false)
+    public Optional cancellaProdotto(Long id){
+        Optional<Prodotto> ret = prodottoRepository.findById(id);
+        prodottoRepository.deleteByProdottoId(id);
+        return ret;
+    }
+
+    public List<Prodotto> mostraTuttiProdotti(){ return prodottoRepository.findAll();
     }
 
 

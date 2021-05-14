@@ -1,6 +1,5 @@
 package com.ecommerce.storegym.entities;
 
-import com.sun.istack.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

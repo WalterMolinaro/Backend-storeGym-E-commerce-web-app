@@ -23,11 +23,12 @@ public class Prodotto {
     @Column(name = "nomeProdotto", nullable = false)
     private String nomeProdotto;
 
-    @Column(name = "immagineProdotto")
+
+    @Column(name = "immagineProdotto",length = 1024)
     private String immagineProdotto;
 
     @Column(name = "peso")
-    private int peso;
+    private double peso;
 
     @Column(name = "prezzo", nullable = false)
     private double prezzo;
@@ -50,6 +51,9 @@ public class Prodotto {
 
     @Enumerated(EnumType.STRING)
     private CategoriaProdotto categoriaProdotto;
+
+    @Column(name= "descrizioneProdotto", length = 1024)
+    private String descrizioneProdotto;
 
     public enum CategoriaProdotto{INTEGRATORI, PESI, ATTREZZI}
 
