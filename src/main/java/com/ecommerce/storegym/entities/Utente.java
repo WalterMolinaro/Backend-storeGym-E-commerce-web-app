@@ -24,7 +24,7 @@ public class Utente {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "dataRegistrazione", nullable = false)
+    @Column(name = "dataRegistrazione")
     private LocalDate dataRegistrazione;
 
     @Enumerated(EnumType.STRING)
@@ -44,9 +44,6 @@ public class Utente {
      * Con @PrimaryKeyJoinColumn, indichiamo a JPA che la tabella Admin ha come chiave primaria
      * la stessa della tabella User.
      */
-    @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true )
-    @PrimaryKeyJoinColumn
-    private Admin admin;
 
     @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true )
     @PrimaryKeyJoinColumn

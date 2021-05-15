@@ -28,16 +28,10 @@ public class ProdottoService {
     /* readOnly serve solo per sapre se è in sola lettura.*/
     @Transactional(readOnly = true)
     public List<Prodotto> mostraProdottiCategoria(Prodotto.CategoriaProdotto categoria){
-        if (! (categoria instanceof Prodotto.CategoriaProdotto) ) throw new
-                IllegalArgumentException("La categoria passata in input, non è valida!");
         List<Prodotto> ret = prodottoRepository.findByCategoriaProdotto(categoria);
         return ret;
     }//mostraProdottoCategoria
 
-    @Transactional(readOnly = true)
-    public List<Prodotto>mostraProdottiNome(String nome){
-        return prodottoRepository.findByNomeProdotto(nome);
-    }//mostraProdottoNome
 
     /**
      * Quando si fa un inserimento è sempre buona prassi
@@ -51,8 +45,8 @@ public class ProdottoService {
 
     @Transactional(readOnly = true)
     public List<Prodotto> mostraTuttiProdottiPaginati(int pageNumber, int pageSize, String sortBy){
-        Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        Page<Prodotto> pagedResult = prodottoRepository.findAll(paging);
+        Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        Page<Prodotto> pagedResult =prodottoRepository.findAll(page);
         if ( pagedResult.hasContent() ) {
             return pagedResult.getContent();
         }
@@ -61,14 +55,13 @@ public class ProdottoService {
         }
     }
     @Transactional(readOnly = false)
-    public Optional cancellaProdotto(Long id){
-        Optional<Prodotto> ret = prodottoRepository.findById(id);
-        prodottoRepository.deleteByProdottoId(id);
-        return ret;
+    public Prodotto cancellaProdotto(Long id){
+        if(prodottoRepository.existsById(id)) {
+            Prodotto ret = prodottoRepository.findByProdottoId(id);
+            prodottoRepository.deleteByProdottoId(id);
+            return ret;
+        }
+        return null;
     }
-
-    public List<Prodotto> mostraTuttiProdotti(){ return prodottoRepository.findAll();
-    }
-
 
 }
