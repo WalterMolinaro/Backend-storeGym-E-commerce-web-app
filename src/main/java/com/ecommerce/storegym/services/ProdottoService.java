@@ -1,6 +1,7 @@
 package com.ecommerce.storegym.services;
 
 import com.ecommerce.storegym.entities.Prodotto;
+import com.ecommerce.storegym.entities.ProdottoCarrello;
 import com.ecommerce.storegym.repositories.ProdottoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,14 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-/**
- * 1) mostro tutti i prodotti che appartengono ad una data categoria
- * 2)
- */
 
 @Service
 public class ProdottoService {
@@ -37,7 +34,10 @@ public class ProdottoService {
      * Quando si fa un inserimento è sempre buona prassi
      * ritornare il tipo che abbiamo inserito, perché tale
      * oggetto lo diamo come risultato al client
-     * dopo l'inserimento. */
+     * dopo l'inserimento.
+     *
+     * Aggiunge prodotto nel db
+     * */
     @Transactional(readOnly = false)
     public Prodotto aggiungiProdotto(Prodotto prodotto){
         return prodottoRepository.save(prodotto);
@@ -46,7 +46,7 @@ public class ProdottoService {
     @Transactional(readOnly = true)
     public List<Prodotto> mostraTuttiProdottiPaginati(int pageNumber, int pageSize, String sortBy){
         Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
-        Page<Prodotto> pagedResult =prodottoRepository.findAll(page);
+        Page<Prodotto> pagedResult = prodottoRepository.findAll(page);
         if ( pagedResult.hasContent() ) {
             return pagedResult.getContent();
         }
@@ -54,6 +54,16 @@ public class ProdottoService {
             return new ArrayList<>();
         }
     }
+    @Transactional(readOnly = true)
+    public List<Prodotto> mostraTuttiProdotti(){
+        return prodottoRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Prodotto> prodottiNome(String nomeProdotto){
+        return prodottoRepository.findProdottoByNomeProdotto(nomeProdotto);
+    }
+
     @Transactional(readOnly = false)
     public Prodotto cancellaProdotto(Long id){
         if(prodottoRepository.existsById(id)) {

@@ -7,12 +7,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
-import java.util.Optional;
+
 
 @Repository
 public interface ProdottoRepository extends JpaRepository<Prodotto,Long> {
 
     List<Prodotto> findByCategoriaProdotto(Prodotto.CategoriaProdotto categoria);
+
+    List<Prodotto> findProdottoByNomeProdotto(String nomeProdotto);
+
+    List<Prodotto> findAll();
+
+
 
     Prodotto findByProdottoId(Long id);
 

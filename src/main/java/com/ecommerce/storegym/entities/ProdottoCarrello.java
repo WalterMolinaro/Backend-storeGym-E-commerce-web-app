@@ -1,11 +1,13 @@
 package com.ecommerce.storegym.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+
 @Getter
 @Setter
 @ToString
@@ -14,28 +16,26 @@ import javax.persistence.*;
 @Entity
 @Table(name = "prodottoCarrello")
 public class ProdottoCarrello {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "prodottoCarrelloId", nullable = false)
-    private long prodottoCarrelloId;
+    @Column(name = "prodottoCarrelloId")
+    private Long prodottoCarrelloId;
 
-    @Column(name = "quantitaCarrello", nullable = false)
-    private int quantitaCarrello;
 
-    @Column(name = "subTotaleCarrello", nullable = false)
-    private double subTotaleCarrello;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "prodotto", nullable = false)
+    private Prodotto prodotto;
 
-    /**
-     * Con @ManyToOne indichiamo a JPA che ProdottoCarrello è in relazione N:1  con Carrello.
-     * Quindi il campo carrello lato DB sarà una FK.
-     */
     @ManyToOne
-    @JoinColumn(name = "carrelloId")
+    @JoinColumn(name = "carrello_relativo")
+    @JsonIgnore
+    @ToString.Exclude
     private Carrello carrello;
 
-    @OneToOne
-    @JoinColumn(name = "prodottoId")
-    @MapsId
-    private Prodotto prodotto;
+   @Column(name = "quantitaRichiesta")
+    public int quantitaRichiesta;
+
+
 
 }

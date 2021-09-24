@@ -1,8 +1,11 @@
 package com.ecommerce.storegym.repositories;
 
+import com.ecommerce.storegym.entities.Carrello;
 import com.ecommerce.storegym.entities.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 
 /**
@@ -18,5 +21,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UtenteRepository extends JpaRepository<Utente,Long> {
+
+    List<Utente> findAll();
+    Utente findByEmail(String email);
+    Utente findByEmailAndPassword(String email,String password);
+    boolean existsByEmail(String email);
+    boolean existsByEmailAndPassword(String email,String password);
 
 }

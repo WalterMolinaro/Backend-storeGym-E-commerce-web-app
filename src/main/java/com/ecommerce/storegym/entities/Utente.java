@@ -1,9 +1,11 @@
 package com.ecommerce.storegym.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -13,39 +15,41 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "utente")
 public class Utente {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "idUtente", nullable = false)
     private long idUtente;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "nomeUtente", nullable = false)
+    private String nomeUtente;
+
+    @Column(name = "cognomeUtente", nullable = false)
+    private String cognomeUtente;
+
+    @Column(name = "telefonoUtente", nullable = false,length = 1024)
+    private String telefonoUtente;
+
+    @Column(name = "indirizzoUtente", nullable = false)
+    private String indirizzoUtente;
+
+    @Column(name = "email", nullable = false,length = 1024)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false,length = 1024)
     private String password;
 
-    @Column(name = "dataRegistrazione")
-    private LocalDate dataRegistrazione;
+    @OneToOne
+    @ToString.Exclude
+    private Carrello carrello;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ruoloUtente", nullable = false)
-    private RuoloUtente ruoloUtente;
+    @Column(name = "dataRegistrazione",length = 1024)
+    private String dataRegistrazione;
 
-    public enum RuoloUtente{ UTENTE_ADMIN, UTENTE_CLIENTE}
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.MERGE)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Ordine> ordini;
 
-    /**
-     * Con @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
-     * sto indicando a JPA che c'è una relazione 1:1 con la classe  che mappa la tabella
-     * Admin. Inoltre, con cascade = CascadeType.ALL, indichiamo che è attivo il cascade su tutte
-     * le operazioni di INSERT, UPDATE, DELETE (non è obbligatorio avere il cascade lato db).
-     * Infine, con orphanRemoval = true indichiamo che se un figlio, Admin, rimane "orfano" del padre,
-     * Utente, (ovvero ha foreign key null), deve essere cancellato automaticamente.
-     *
-     * Con @PrimaryKeyJoinColumn, indichiamo a JPA che la tabella Admin ha come chiave primaria
-     * la stessa della tabella User.
-     */
 
-    @OneToOne(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true )
-    @PrimaryKeyJoinColumn
-    private Cliente cliente;
 }

@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -33,32 +36,20 @@ public class Prodotto {
     @Column(name = "prezzo", nullable = false)
     private double prezzo;
 
-    /**
-     * Creo la distinzione tra prodottoCarrello e prodottoOrdine, poiché sebbene possano
-     * sembrare quasi le stesse entità, il prodotto nel carrello può ancora essere modificato,
-     * viceversa, un ordine non può più essere modificato.
-     *
-     * Così facendo riesco a rendere persistente sia il carrello, sia riesco a tenermi traccia degli
-     * ordini che ho effettuato.
-     */
-    @OneToOne(mappedBy = "prodotto", cascade = CascadeType.ALL, orphanRemoval = true )
-    @PrimaryKeyJoinColumn
-    private ProdottoCarrello prodottoCarrello;
-
-    @OneToOne(mappedBy = "prodotto", cascade = CascadeType.ALL,orphanRemoval = true)
-    @PrimaryKeyJoinColumn
-    private ProdottoOrdine prodottoOrdine;
-
     @Enumerated(EnumType.STRING)
     private CategoriaProdotto categoriaProdotto;
 
     @Column(name= "descrizioneProdotto", length = 1024)
     private String descrizioneProdotto;
 
+
+
     public enum CategoriaProdotto{INTEGRATORI, PESI, ATTREZZI}
 
     @Column(name = "quantitaTotale")
     private int quantitaTotale;
+
+
 
     /**
     @VERSION: consente di implemetare i lock ottimistici:
@@ -68,5 +59,20 @@ public class Prodotto {
     @Column(name = "version", nullable = false)
     @JsonIgnore
     private long version;
+
+
+    //il mappedby indica l'entità che possiede la relzazione, nel mio case il prodottoCarrello possiede il prodotto
+    @OneToMany(targetEntity = ProdottoCarrello.class,
+            mappedBy = "prodotto",cascade = CascadeType.MERGE)
+    @ToString.Exclude
+    @JsonIgnore
+    private List<ProdottoCarrello> prodottiCarrelloLista;
+
+    @OneToMany(targetEntity = ProdottoInOrdine.class,mappedBy = "prodotto", cascade = CascadeType.MERGE)
+    @ToString.Exclude
+    @JsonIgnore
+    private List<ProdottoInOrdine> prodottiInOrdine;
+
+
 
 }

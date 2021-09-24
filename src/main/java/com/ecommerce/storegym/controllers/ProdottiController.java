@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/prodotti")
@@ -39,9 +37,14 @@ public class ProdottiController {
      * l'annotazione @RequestBody indica che l'oggetto prodotto spring deve andarlo a recuperare nel body della richiesta
      * Questo oggetto viene codificato tramite oggetto Json
      */
+
+    /**
+     *Carica i prodotti nel db con una richesta json
+     */
+    @CrossOrigin
     @PostMapping
     public ResponseEntity creaProdotto(@RequestBody Prodotto prodotto) {
-        try {
+       try {
             prodottoService.aggiungiProdotto(prodotto);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
@@ -53,6 +56,12 @@ public class ProdottiController {
     /**
      * l'annotazione @DeleteMapping specifica quale prodotto eliminare prendendo l'id dell'URL
      */
+
+    /**
+     * Metodo inserito a scopo didattico,
+     * permette di effettuare una cancellazione di prodotti dal db
+     */
+    @CrossOrigin
     @DeleteMapping("/cancella/{id}")
     public ResponseEntity cancellaProdotto(@PathVariable(value = "id") Long id) {
         Prodotto op = prodottoService.cancellaProdotto(id);
@@ -63,9 +72,14 @@ public class ProdottiController {
     }//cancellaProdotto
 
 
-    /* L'oggetto ResponseEntity ha due utilità: se noi ritorniamo come risultato una lista di acquisti, se volessimo
+    /** L'oggetto ResponseEntity ha due utilità: se noi ritorniamo come risultato una lista di acquisti, se volessimo
     ritornare il messaggio come oltre all'oggetto, potremmo farlo e questo ci permette di mandare al client la richiesta
     di status */
+
+    /**
+     * Mostra prodotti paginati
+     */
+    @CrossOrigin
     @GetMapping()
     public ResponseEntity mostraTuttiProdottiPaginati(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
                                                       @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
@@ -78,8 +92,24 @@ public class ProdottiController {
     }//mostraTuttiProdottiPaginati
 
     /**
-     *  @RequestParam per estrarre parametri di query, parametri di modulo e persino file dalla richiesta.
+     * Mostra tutti i prodotti
      */
+    @CrossOrigin
+    @GetMapping("/all")
+    public ResponseEntity mostraTuttiProdotti() {
+        List<Prodotto> risultato = prodottoService.mostraTuttiProdotti();
+        if (risultato.size() <= 0) {
+            return new ResponseEntity<>(new MessaggioRisposta("Nessun risultato!"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(risultato, HttpStatus.OK);
+    }//mostraTuttiProdotti
+
+    /**
+     *  @RequestParam per estrarre parametri di query, parametri di modulo e persino file dalla richiesta.
+     *
+     *  Mostra prodotti per categoria
+     */
+    @CrossOrigin
     @GetMapping("/categoria")
     public ResponseEntity mostraPerCategoria(@RequestParam(value = "categoriaProdotto",defaultValue = "ATTREZZI" )String categoriaProdotto) {
         String cp = categoriaProdotto.toUpperCase().trim();
@@ -90,6 +120,23 @@ public class ProdottiController {
                 return new ResponseEntity<>(categoria, HttpStatus.OK);
             }
             return new ResponseEntity<>(new MessaggioRisposta("Nessun risultato!"), HttpStatus.OK);
+    }
+
+    /**
+     * Mostra tutti i prodotti per nome
+     * Funzione implementata per consentire la ricerca dei prodotti
+     * Dalla barra di ricerca lato front end
+     */
+    @CrossOrigin
+    @GetMapping("/nomeProdotti/{nomeProdotto}")
+    public ResponseEntity mostraProdottiPerNome(@PathVariable(value = "nomeProdotto") String nomeProdotto ){
+        List<Prodotto> risultato = prodottoService.prodottiNome(nomeProdotto);
+        if (risultato.size() <= 0) {
+            return new ResponseEntity<>(new MessaggioRisposta("Nessun risultato!"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(risultato, HttpStatus.OK);
+
+
     }
 }//ProdottiController
 

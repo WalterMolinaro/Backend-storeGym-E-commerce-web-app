@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,23 +24,16 @@ public class Ordine {
     private long ordineId;
 
     @Column(name = "dataCreazione", nullable = false)
-    private LocalDate dataCreazione;
-
-    @Column(name = "dataSpedizione")
-    private LocalDate dataSpedizione;
-
-    public enum StatoOrdine{COMPLETATO, ELIMINATO, RIFIUTATO}
-
-    @Enumerated(EnumType.STRING)
-    private StatoOrdine statoOrdine;
+    private String dataCreazione;
 
     @Column(name= "totaleOrdine")
     private double totaleOrdine;
 
-    @OneToMany(mappedBy = "ordine")
-    private Set<ProdottoOrdine> prodottoOrdine;
-
     @ManyToOne
-    @JoinColumn(name = "clienteId")
-    private Cliente cliente;
+    @JoinColumn(name = "acquirente")
+    private Utente utente;
+
+    @OneToMany(mappedBy = "ordine", cascade = CascadeType.MERGE)
+    private List<ProdottoInOrdine> prodottiInOrdine;
+
 }
